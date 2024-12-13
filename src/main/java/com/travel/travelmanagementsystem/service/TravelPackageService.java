@@ -1,16 +1,18 @@
 package com.travel.travelmanagementsystem.service;
 
+import com.travel.travelmanagementsystem.Payload.TravelPacakgeResponse;
+import com.travel.travelmanagementsystem.Payload.TravelPackageDTO;
 import com.travel.travelmanagementsystem.model.TravelPackage;
 
 import java.util.List;
 
 public interface TravelPackageService {
 
-    List<TravelPackage> getAllPackages();
+    TravelPacakgeResponse getAllPackages();
 
-    void createPackage(TravelPackage travelPackage);
+    TravelPackageDTO createPackage(TravelPackageDTO travelPackageD);
 
-    String deletePackage(Long packageId);
+    TravelPackageDTO deletePackage(Long packageId);
 
-    TravelPackage updatePackage(TravelPackage travelPackage, Long packageId);
+    TravelPackageDTO updatePackage(TravelPackageDTO travelPackageDTO, Long packageId);
 }

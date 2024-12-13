@@ -1,11 +1,15 @@
 package com.travel.travelmanagementsystem.service;
+import com.travel.travelmanagementsystem.Payload.TravelPacakgeResponse;
+import com.travel.travelmanagementsystem.Payload.TravelPackageDTO;
 import com.travel.travelmanagementsystem.exceptions.APIException;
 import com.travel.travelmanagementsystem.exceptions.ResourceNotFoundException;
 import com.travel.travelmanagementsystem.model.TravelPackage;
 import com.travel.travelmanagementsystem.repository.TravelPackageRepository;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -17,38 +21,50 @@ public class TravelPackageServiceImpl implements TravelPackageService {
     @Autowired
     private TravelPackageRepository travelPackageRepository;
 
+    @Autowired
+    private ModelMapper modelMapper;
     @Override
-    public List<TravelPackage> getAllPackages() {
+    public TravelPacakgeResponse getAllPackages() {
         List<TravelPackage> travelPackages = travelPackageRepository.findAll();
         if(travelPackages.isEmpty()){
             throw new APIException("Travel package detail are not yet added");
         }
-        return travelPackages;
+
+        List<TravelPackageDTO> travelPackageDTOS = travelPackages.stream()
+                .map(travelPackage -> modelMapper.map(travelPackage, TravelPackageDTO.class))
+                .toList();
+        TravelPacakgeResponse travelPackageResponse = new TravelPacakgeResponse();
+        travelPackageResponse.setContent(travelPackageDTOS);
+        return travelPackageResponse;
 
     }
 
     @Override
-    public void createPackage(TravelPackage travelPackage) {
+    public TravelPackageDTO createPackage(TravelPackageDTO travelPackageDTO) {
     //    travelPackage.setId(nextId++);
-        TravelPackage savedTravelPackage = travelPackageRepository.findBytravelPackageName(travelPackage.getTravelPackageName());
-        if(savedTravelPackage != null) {
-            throw new APIException("Category already exists with this " + savedTravelPackage.getTravelPackageName()+" name !!!");
+        TravelPackage travelPackage = modelMapper.map(travelPackageDTO, TravelPackage.class);
+        TravelPackage travelPackageFromDB = travelPackageRepository.findBytravelPackageName(travelPackage.getTravelPackageName());
+        if(travelPackageFromDB != null) {
+            throw new APIException("Category already exists with this " + travelPackage.getTravelPackageName()+" name !!!");
         }
-        travelPackageRepository.save(travelPackage);
+        TravelPackage savedTravelPackage = travelPackageRepository.save(travelPackage);
+        return modelMapper.map(savedTravelPackage, TravelPackageDTO.class);
     }
     @Override
-    public String deletePackage(Long travelPackageId) {
+    public TravelPackageDTO deletePackage(Long travelPackageId) {
         TravelPackage travelPackage = travelPackageRepository.findById(travelPackageId)
                 .orElseThrow(()-> new ResourceNotFoundException("TravelPackage", "TravelPackageId", travelPackageId));
         travelPackageRepository.delete(travelPackage);
-        return "category with categoryId " + travelPackageId + " deleted !!";
+        return modelMapper.map(travelPackage, TravelPackageDTO.class);
     }
     @Override
-    public TravelPackage updatePackage(TravelPackage travelPackage, Long travelPackageId) {
+    public TravelPackageDTO updatePackage(TravelPackageDTO travelPackageDTO, Long travelPackageId) {
         TravelPackage savedPackage = travelPackageRepository.findById(travelPackageId)
                         .orElseThrow(()-> new ResourceNotFoundException("TravelPackage", "TravelPackageId", travelPackageId));
-        travelPackage.setTravelPackageId(travelPackageId);
-        travelPackageRepository.save(travelPackage);
-        return savedPackage;
+
+        TravelPackage travelPackage = modelMapper.map(travelPackageDTO, TravelPackage.class);
+        travelPackageDTO.setTravelPackageId(travelPackageId);
+        savedPackage  = travelPackageRepository.save(travelPackage);
+        return modelMapper.map(savedPackage, TravelPackageDTO.class);
     }
 }

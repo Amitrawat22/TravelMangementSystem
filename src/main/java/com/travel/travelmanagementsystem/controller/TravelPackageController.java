@@ -1,7 +1,10 @@
 package com.travel.travelmanagementsystem.controller;
 
+import com.travel.travelmanagementsystem.Payload.TravelPacakgeResponse;
+import com.travel.travelmanagementsystem.Payload.TravelPackageDTO;
 import com.travel.travelmanagementsystem.model.TravelPackage;
 import com.travel.travelmanagementsystem.service.TravelPackageService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,28 +21,28 @@ public class TravelPackageController {
     private TravelPackageService packageService;
 
     @RequestMapping(value = "/public/packages",method = RequestMethod.GET)
-    public ResponseEntity<List<TravelPackage>> getAllPackages() {
-        List<TravelPackage> packages = packageService.getAllPackages();
-        return new ResponseEntity<>(packages, HttpStatus.OK);
+    public ResponseEntity<TravelPacakgeResponse> getAllPackages() {
+        TravelPacakgeResponse travelPacakgeResponse = packageService.getAllPackages();
+        return new ResponseEntity<>(travelPacakgeResponse, HttpStatus.OK);
     }
     @RequestMapping(value = "/public/packages",method = RequestMethod.POST)
-    public ResponseEntity<String> createPackage(@RequestBody TravelPackage travelPackage) {
-        packageService.createPackage(travelPackage);
-        return new ResponseEntity<>("category added successfully", HttpStatus.CREATED);
+    public ResponseEntity<TravelPackageDTO> createPackage(@Valid @RequestBody TravelPackageDTO travelPackageDTO) {
+        TravelPackageDTO savedTravelPackageDTO  = packageService.createPackage(travelPackageDTO);
+        return new ResponseEntity<>(savedTravelPackageDTO, HttpStatus.CREATED);
     }
 
     @RequestMapping(value = "/admin/packages/{travelPackageId}",method = RequestMethod.DELETE)
-    public ResponseEntity<String> deletePackage(@PathVariable Long travelPackageId) {
+    public ResponseEntity<TravelPackageDTO> deletePackage(@PathVariable Long travelPackageId) {
 
-            String status = packageService.deletePackage(travelPackageId);
-            return new ResponseEntity<>(status, HttpStatus.OK);
+            TravelPackageDTO deletedPackage = packageService.deletePackage(travelPackageId);
+            return new ResponseEntity<>(deletedPackage, HttpStatus.OK);
 
     }
     @RequestMapping(value ="/public/packages/{travelPackageId}",method = RequestMethod.PUT)
-    public ResponseEntity<String> updatePackage(@RequestBody TravelPackage travelPackage,
+    public ResponseEntity<TravelPackageDTO> updatePackage(@Valid @RequestBody TravelPackageDTO travelPackageDTO,
                                                 @PathVariable Long travelPackageId)
     {
-            TravelPackage savedTravelPackage = packageService.updatePackage(travelPackage,travelPackageId);
-            return new ResponseEntity<>("Category updated with category id: " + travelPackageId , HttpStatus.OK);
+            TravelPackageDTO savedTravelPackageDTO = packageService.updatePackage(travelPackageDTO,travelPackageId);
+            return new ResponseEntity<>(savedTravelPackageDTO , HttpStatus.OK);
     }
 }
