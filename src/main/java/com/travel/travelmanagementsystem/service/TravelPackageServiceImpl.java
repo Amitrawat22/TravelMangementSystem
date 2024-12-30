@@ -5,8 +5,13 @@ import com.travel.travelmanagementsystem.exceptions.APIException;
 import com.travel.travelmanagementsystem.exceptions.ResourceNotFoundException;
 import com.travel.travelmanagementsystem.model.TravelPackage;
 import com.travel.travelmanagementsystem.repository.TravelPackageRepository;
+import jdk.jfr.Category;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -24,8 +29,16 @@ public class TravelPackageServiceImpl implements TravelPackageService {
     @Autowired
     private ModelMapper modelMapper;
     @Override
-    public TravelPacakgeResponse getAllPackages() {
-        List<TravelPackage> travelPackages = travelPackageRepository.findAll();
+    public TravelPacakgeResponse getAllPackages(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
+        Sort sortByAndOrder = sortOrder.equalsIgnoreCase("Ascending")
+                 ? Sort.by(sortBy).ascending()
+                : Sort.by(sortBy).descending();
+
+
+        Pageable pageDetails = PageRequest.of(pageNumber, pageSize, sortByAndOrder);
+        Page<TravelPackage> travelPackagePage = travelPackageRepository.findAll(pageDetails);
+
+        List<TravelPackage> travelPackages = travelPackagePage.getContent();
         if(travelPackages.isEmpty()){
             throw new APIException("Travel package detail are not yet added");
         }
@@ -35,8 +48,12 @@ public class TravelPackageServiceImpl implements TravelPackageService {
                 .toList();
         TravelPacakgeResponse travelPackageResponse = new TravelPacakgeResponse();
         travelPackageResponse.setContent(travelPackageDTOS);
+        travelPackageResponse.setPageNumber(travelPackagePage.getNumber());
+        travelPackageResponse.setPageSize(travelPackagePage.getSize());
+        travelPackageResponse.setTotalPages(travelPackagePage.getTotalPages());
+        travelPackageResponse.setTotalElements(travelPackagePage.getTotalElements());
+        travelPackageResponse.setLastPage(travelPackagePage.isLast());
         return travelPackageResponse;
-
     }
 
     @Override

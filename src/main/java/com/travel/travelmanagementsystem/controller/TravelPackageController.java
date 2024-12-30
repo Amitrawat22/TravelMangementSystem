@@ -2,6 +2,7 @@ package com.travel.travelmanagementsystem.controller;
 
 import com.travel.travelmanagementsystem.Payload.TravelPacakgeResponse;
 import com.travel.travelmanagementsystem.Payload.TravelPackageDTO;
+import com.travel.travelmanagementsystem.config.AppConstants;
 import com.travel.travelmanagementsystem.model.TravelPackage;
 import com.travel.travelmanagementsystem.service.TravelPackageService;
 import jakarta.validation.Valid;
@@ -21,8 +22,13 @@ public class TravelPackageController {
     private TravelPackageService packageService;
 
     @RequestMapping(value = "/public/packages",method = RequestMethod.GET)
-    public ResponseEntity<TravelPacakgeResponse> getAllPackages() {
-        TravelPacakgeResponse travelPacakgeResponse = packageService.getAllPackages();
+    public ResponseEntity<TravelPacakgeResponse> getAllPackages(
+            @RequestParam(name = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
+            @RequestParam(name = "pageSize", defaultValue = AppConstants.PAGE_SIZE,required = false) Integer pageSize,
+            @RequestParam(name = "sortBy",defaultValue = AppConstants.SORT_TRAVELPACKAGES_BY,required = false) String sortBy,
+            @RequestParam(name = "sortOrder",defaultValue = AppConstants.SORT_DIR,required = false) String sortOrder
+    ) {
+        TravelPacakgeResponse travelPacakgeResponse = packageService.getAllPackages(pageNumber, pageSize, sortBy, sortOrder);
         return new ResponseEntity<>(travelPacakgeResponse, HttpStatus.OK);
     }
     @RequestMapping(value = "/public/packages",method = RequestMethod.POST)

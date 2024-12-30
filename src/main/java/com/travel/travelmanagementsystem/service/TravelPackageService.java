@@ -8,11 +8,13 @@ import java.util.List;
 
 public interface TravelPackageService {
 
-    TravelPacakgeResponse getAllPackages();
+    TravelPacakgeResponse getAllPackages(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder);
 
     TravelPackageDTO createPackage(TravelPackageDTO travelPackageD);
 
     TravelPackageDTO deletePackage(Long packageId);
 
     TravelPackageDTO updatePackage(TravelPackageDTO travelPackageDTO, Long packageId);
+
+
 }

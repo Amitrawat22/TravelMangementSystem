@@ -11,4 +11,9 @@ import java.util.List;
 @NoArgsConstructor
 public class TravelPacakgeResponse {
     private List<TravelPackageDTO> content;
+    private Integer pageNumber;
+    private Integer pageSize;
+    private Long totalElements;
+    private Integer totalPages;
+    private Boolean lastPage;
 }
