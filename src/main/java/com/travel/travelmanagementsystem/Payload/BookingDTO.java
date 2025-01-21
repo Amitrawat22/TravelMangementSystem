@@ -9,11 +9,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class BookingDTO {
-    private Long bookingId;
+    private long bookingId;
     private String bookingDate;
-    private String bookingTime;
+    private long bookingPrice;
     private String bookingLocation;
-    private Integer price;
     private String bookingStatus;
-    private Integer totalPassengers;
+    private int numberOfPassengers;
 }

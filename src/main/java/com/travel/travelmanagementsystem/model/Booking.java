@@ -24,5 +24,4 @@ public class Booking {
     private TravelPackage travelPackage;
 
 
-
 }

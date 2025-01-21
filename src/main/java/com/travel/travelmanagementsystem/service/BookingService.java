@@ -1,4 +1,11 @@
 package com.travel.travelmanagementsystem.service;
 
-public interface BookingService {
+
+import com.travel.travelmanagementsystem.Payload.BookingDTO;
+import com.travel.travelmanagementsystem.model.Booking;
+
+
+public interface BookingService{
+
+    BookingDTO addBooking(Long travelPackageId, Booking booking);
 }
